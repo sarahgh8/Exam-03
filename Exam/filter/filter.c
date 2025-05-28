@@ -5,24 +5,10 @@
 #include <string.h>
 #include <sys/types.h>
 
-#ifndef BUFF_S
-#define BUFF_S 4096
-#endif
+/**
+ * This fucntion filters the the buffer from teh given word
+ */
 
-// int _strchr(char *str, char c)
-// {
-//     int i = -1;
-//     while(str[++i])
-//     {
-//         if(str[i] == c)
-//             return 1;
-//         continue;
-//     }
-//     return 0;
-// }
-// int search(char *buff, char *word, int start, size_t size)
-// {
-// }
 void ft_filter(char *buffer, char *word)
 {
     size_t word_len = strlen(word);
@@ -51,14 +37,13 @@ void ft_filter(char *buffer, char *word)
 }
 
 /**
- * The main function got a lot of stuff to do,
- * first it validats the args, they should be 2
- * (the executable and the word)
- * and the word (argv[1]) shouldn't be empty
+ * The main function takes arguments and validate them
+ * based on the 2 things
+ * 1. There must be only 2 arguments (a.out / argv[1] = word)
+ * 2. argv[1] shouldn't be empty
  * 
- * then we declare 5 vars, a char to store the chars we read from the stdin
- * i for indexing and intialize it with zero
- * r = to store how many
+ * next it reads the whole stdin and stores it in the buffer
+ * and then send the the buffer and the word to ft_filter fucntion.
  */
 int main(int argc, char **argv)
 {
@@ -66,28 +51,18 @@ int main(int argc, char **argv)
     if(argc != 2 || argv[1][0] == '\0')
         return 1;
     
-    char c;
-    int i = 0;
     ssize_t r;
-    
-    char *buffer;
+    char buffer[5000000];
     char *word = argv[1];
-    
-    buffer = calloc(1, sizeof(char));
-    if(!buffer)
-        return (perror("error"), 1);
-    
-    while((r = read(0, &c, 1)))
-    {
-        buffer = realloc(buffer, i + 2);
-        if(!buffer)
-            return(perror("error"), free(buffer), 1);
-        buffer[i] = c;
-        i++;
-        buffer[i] = '\0';
-    }
 
+    r = read(0, buffer, 5000000);
+    buffer[r] = '\0';
+
+    if(r < 0)
+    {
+        perror("Error");
+        return 1;
+    }
     ft_filter(buffer, word);
-    free(buffer);
     return 0;
 }
