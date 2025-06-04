@@ -50,19 +50,18 @@ int main(int argc, char **argv)
 
     if(argc != 2 || argv[1][0] == '\0')
         return 1;
-    
     ssize_t r;
     char buffer[5000000];
     char *word = argv[1];
-
-    r = read(0, buffer, 5000000);
-    buffer[r] = '\0';
-
+    while((r = read(0, buffer, sizeof(buffer) - 1)) > 0)
+    {
+        buffer[r] = '\0';
+        ft_filter(buffer, word);
+    }
     if(r < 0)
     {
         perror("Error");
         return 1;
     }
-    ft_filter(buffer, word);
     return 0;
 }
