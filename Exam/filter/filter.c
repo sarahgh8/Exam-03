@@ -5,6 +5,10 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 32
+#endif 
+
 /**
  * This fucntion filters the the buffer from teh given word
  */
@@ -51,17 +55,23 @@ int main(int argc, char **argv)
     if(argc != 2 || argv[1][0] == '\0')
         return 1;
     ssize_t r;
-    char buffer[5000000];
+    char buffer[BUFFER_SIZE];
     char *word = argv[1];
-    while((r = read(0, buffer, sizeof(buffer) - 1)) > 0)
+    char *input = NULL;
+    size_t total_size = 0;
+    while((r = read(0, buffer, BUFFER_SIZE)) > 0)
     {
-        buffer[r] = '\0';
-        ft_filter(buffer, word);
+        char *new_input = realloc(input, total_size + r + 1);
+        input = new_input;
+        memmove(input + total_size, buffer, r);
+        total_size += r;
+        input[total_size] = '\0';
     }
     if(r < 0)
     {
         perror("Error");
         return 1;
     }
+    ft_filter(input, word);
     return 0;
 }
